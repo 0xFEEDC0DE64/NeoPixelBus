@@ -118,7 +118,7 @@ private:
 
 typedef Ws2801MethodBase<TwoWireBitBangImple> NeoWs2801Method;
 
-#if !defined(__AVR_ATtiny85__) && !defined(ARDUINO_attiny)
+#if !defined(__AVR_ATtiny85__) && !defined(ARDUINO_attiny) && !defined(ESP32)
 #include "TwoWireSpiImple.h"
 typedef Ws2801MethodBase<TwoWireSpiImple<SpiSpeed20Mhz>> NeoWs2801Spi20MhzMethod;
 typedef Ws2801MethodBase<TwoWireSpiImple<SpiSpeed10Mhz>> NeoWs2801Spi10MhzMethod;

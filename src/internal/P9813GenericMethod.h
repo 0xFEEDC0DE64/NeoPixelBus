@@ -114,7 +114,7 @@ private:
 
 typedef P9813MethodBase<TwoWireBitBangImple> P9813Method;
 
-#if !defined(__AVR_ATtiny85__) && !defined(ARDUINO_attiny)
+#if !defined(__AVR_ATtiny85__) && !defined(ARDUINO_attiny) && !defined(ESP32)
 #include "TwoWireSpiImple.h"
 typedef P9813MethodBase<TwoWireSpiImple<SpiSpeed20Mhz>> P9813Spi20MhzMethod;
 typedef P9813MethodBase<TwoWireSpiImple<SpiSpeed10Mhz>> P9813Spi10MhzMethod;

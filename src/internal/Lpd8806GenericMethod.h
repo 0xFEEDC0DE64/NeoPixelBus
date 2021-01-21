@@ -118,7 +118,7 @@ private:
 
 typedef Lpd8806MethodBase<TwoWireBitBangImple> Lpd8806Method;
 
-#if !defined(__AVR_ATtiny85__) && !defined(ARDUINO_attiny)
+#if !defined(__AVR_ATtiny85__) && !defined(ARDUINO_attiny) && !defined(ESP32)
 #include "TwoWireSpiImple.h"
 typedef Lpd8806MethodBase<TwoWireSpiImple<SpiSpeed20Mhz>> Lpd8806Spi20MhzMethod;
 typedef Lpd8806MethodBase<TwoWireSpiImple<SpiSpeed10Mhz>> Lpd8806Spi10MhzMethod;
