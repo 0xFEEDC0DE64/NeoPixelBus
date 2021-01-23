@@ -61,16 +61,6 @@ public:
         }
     }
 
-    static void movePixelsInc_P(uint8_t* pPixelDest, PGM_VOID_P pPixelSrc, uint16_t count)
-    {
-        uint8_t* pEnd = pPixelDest + (count * PixelSize);
-        const uint8_t* pSrc = (const uint8_t*)pPixelSrc;
-        while (pPixelDest < pEnd)
-        {
-            *pPixelDest++ = pgm_read_byte(pSrc++);
-        }
-    }
-
     static void movePixelsDec(uint8_t* pPixelDest, const uint8_t* pPixelSrc, uint16_t count)
     {
         uint8_t* pDestBack = pPixelDest + (count * PixelSize);
@@ -110,21 +100,6 @@ public:
         }
         return color;
     }
-    
-    static ColorObject retrievePixelColor_P(PGM_VOID_P pPixels, uint16_t indexPixel)
-    {
-        ColorObject color;
-        const uint8_t* p = getPixelAddress((const uint8_t*)pPixels, indexPixel);
-        uint8_t commonSize = (PixelSize < color.SegmentCount) ? PixelSize : color.SegmentCount;
-
-        for (uint8_t iSegment = 0; iSegment < commonSize; iSegment++)
-        {
-            color.Segment[iSegment] = pgm_read_byte(p++);
-        }
-
-        return color;
-    }
-    
 };
 
 typedef NeoAbcdefgSegmentFeature SevenSegmentFeature; // Abcdefg order is default

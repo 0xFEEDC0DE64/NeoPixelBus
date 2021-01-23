@@ -84,18 +84,6 @@ public:
         }
     }
 
-    static void movePixelsInc_P(uint8_t* pPixelDest, PGM_VOID_P pPixelSrc, uint16_t count)
-    {
-        uint8_t* pEnd = pPixelDest + (count * PixelSize);
-        const uint8_t* pSrc = (const uint8_t*)pPixelSrc;
-        while (pPixelDest < pEnd)
-        {
-            *pPixelDest++ = pgm_read_byte(pSrc++);
-            *pPixelDest++ = pgm_read_byte(pSrc++);
-            *pPixelDest++ = pgm_read_byte(pSrc++);
-        }
-    }
-
     static void movePixelsDec(uint8_t* pPixelDest, const uint8_t* pPixelSrc, uint16_t count)
     {
         uint8_t* pDestBack = pPixelDest + (count * PixelSize);
@@ -134,19 +122,6 @@ public:
 
         return color;
     }
-
-    static ColorObject retrievePixelColor_P(PGM_VOID_P pPixels, uint16_t indexPixel)
-    {
-        ColorObject color;
-        const uint8_t* p = getPixelAddress((const uint8_t*)pPixels, indexPixel);
-
-        color.B = (pgm_read_byte(p++)) << 1;
-        color.R = (pgm_read_byte(p++)) << 1;
-        color.G = (pgm_read_byte(p)) << 1;
-
-        return color;
-    }
-
 };
 
 class  Lpd8806GrbFeature : public Lpd88063Elements
@@ -172,18 +147,5 @@ public:
 
         return color;
     }
-
-    static ColorObject retrievePixelColor_P(PGM_VOID_P pPixels, uint16_t indexPixel)
-    {
-        ColorObject color;
-        const uint8_t* p = getPixelAddress((const uint8_t*)pPixels, indexPixel);
-
-        color.G = (pgm_read_byte(p++)) << 1;
-        color.R = (pgm_read_byte(p++)) << 1;
-        color.B = (pgm_read_byte(p)) << 1;
-
-        return color;
-    }
-
 };
 

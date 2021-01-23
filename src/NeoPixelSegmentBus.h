@@ -56,7 +56,7 @@ public:
     }
 
     void SetString(uint16_t indexDigit, 
-        const String& str, 
+        const std::string& str,
         uint8_t brightness, 
         uint8_t defaultBrightness = 0)
     {
