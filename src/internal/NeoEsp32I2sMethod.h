@@ -170,7 +170,9 @@ public:
 
         FillBuffers();
 
-        i2sWrite(T_BUS::I2sBusNumber, _i2sBuffer, _i2sBufferSize, false, false);
+        const auto written = i2sWrite(T_BUS::I2sBusNumber, _i2sBuffer, _i2sBufferSize, false, false);
+        if (written != _i2sBufferSize)
+            ESP_LOGW("NEOPIXL", "written != bufferSize %zd %u", written, _i2sBufferSize);
     }
 
     uint8_t* getData() const
