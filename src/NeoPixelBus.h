@@ -25,8 +25,6 @@ License along with NeoPixel.  If not, see
 -------------------------------------------------------------------------*/
 #pragma once
 
-#include <Arduino.h>
-
 // some platforms do not come with STL or properly defined one, specifically functional
 // if you see...
 // undefined reference to `std::__throw_bad_function_call()'
