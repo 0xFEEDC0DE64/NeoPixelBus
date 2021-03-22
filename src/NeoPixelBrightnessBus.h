@@ -28,11 +28,18 @@ License along with NeoPixel.  If not, see
 
 #include "NeoPixelBus.h"
 
+class NeoPixelBrightnessBusInterface
+{
+public:
+    virtual ~NeoPixelBrightnessBusInterface() = default;
+
+    virtual void SetBrightness(uint8_t brightness) = 0;
+};
+
 template<typename T_COLOR_FEATURE, typename T_METHOD> class NeoPixelBrightnessBus : 
-    public NeoPixelBus<T_COLOR_FEATURE, T_METHOD>
+    public NeoPixelBus<T_COLOR_FEATURE, T_METHOD>, public NeoPixelBrightnessBusInterface
 {
 private:
-
     void ScaleColor(uint16_t scale, typename T_COLOR_FEATURE::ColorObject* color)
     {
         uint8_t* ptr = (uint8_t*)color;
@@ -83,7 +90,7 @@ public:
     {
     }
 
-    void SetBrightness(uint8_t brightness)
+    void SetBrightness(uint8_t brightness) override
     {
         // Only update if there is a change
         if (brightness != _brightness)
@@ -109,13 +116,13 @@ public:
         return _brightness;
     }
 
-    void SetPixelColor(uint16_t indexPixel, typename T_COLOR_FEATURE::ColorObject color)
+    void SetPixelColor(uint16_t indexPixel, typename T_COLOR_FEATURE::ColorObject color) override
     {
         ConvertColor(&color);
         NeoPixelBus<T_COLOR_FEATURE, T_METHOD>::SetPixelColor(indexPixel, color);
     }
 
-    typename T_COLOR_FEATURE::ColorObject GetPixelColor(uint16_t indexPixel) const
+    typename T_COLOR_FEATURE::ColorObject GetPixelColor(uint16_t indexPixel) const override
     {
         typename T_COLOR_FEATURE::ColorObject color = NeoPixelBus<T_COLOR_FEATURE, T_METHOD>::GetPixelColor(indexPixel);
         RecoverColor(&color);

@@ -110,10 +110,20 @@ License along with NeoPixel.  If not, see
 #error "Platform Currently Not Supported, please add an Issue at Github/Makuna/NeoPixelBus"
 #endif
 
+template<typename T_COLOR_FEATURE>
+class NeoPixelBusInterface
+{
+public:
+    virtual ~NeoPixelBusInterface() = default;
 
+    virtual void Begin() = 0;
+    virtual void Show(bool maintainBufferConsistency = true) = 0;
+    virtual bool CanShow() const = 0;
+    virtual void SetPixelColor(uint16_t indexPixel, typename T_COLOR_FEATURE::ColorObject color) = 0;
+    virtual typename T_COLOR_FEATURE::ColorObject GetPixelColor(uint16_t indexPixel) const = 0;
+};
 
-
-template<typename T_COLOR_FEATURE, typename T_METHOD> class NeoPixelBus
+template<typename T_COLOR_FEATURE, typename T_METHOD> class NeoPixelBus : public NeoPixelBusInterface<T_COLOR_FEATURE>
 {
 public:
     // Constructor: number of LEDs, pin number
@@ -140,9 +150,7 @@ public:
     {
     }
 
-    ~NeoPixelBus()
-    {
-    }
+    ~NeoPixelBus() override = default;
 
     operator NeoBufferContext<T_COLOR_FEATURE>()
     {
@@ -150,7 +158,7 @@ public:
         return NeoBufferContext<T_COLOR_FEATURE>(_pixels(), PixelsSize());
     }
 
-    void Begin()
+    void Begin() override
     {
         _method.Initialize();
         Dirty();
@@ -163,7 +171,7 @@ public:
         Dirty();
     }
 
-    void Show(bool maintainBufferConsistency = true)
+    void Show(bool maintainBufferConsistency = true) override
     {
         if (!IsDirty())
         {
@@ -175,7 +183,7 @@ public:
         ResetDirty();
     }
 
-    inline bool CanShow() const
+    inline bool CanShow() const override
     { 
         return _method.IsReadyToUpdate();
     };
@@ -215,7 +223,7 @@ public:
         return _countPixels;
     };
 
-    void SetPixelColor(uint16_t indexPixel, typename T_COLOR_FEATURE::ColorObject color)
+    void SetPixelColor(uint16_t indexPixel, typename T_COLOR_FEATURE::ColorObject color) override
     {
         if (indexPixel < _countPixels)
         {
@@ -224,7 +232,7 @@ public:
         }
     };
 
-    typename T_COLOR_FEATURE::ColorObject GetPixelColor(uint16_t indexPixel) const
+    typename T_COLOR_FEATURE::ColorObject GetPixelColor(uint16_t indexPixel) const override
     {
         if (indexPixel < _countPixels)
         {
