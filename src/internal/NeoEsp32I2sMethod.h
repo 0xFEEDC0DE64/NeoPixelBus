@@ -28,11 +28,9 @@ License along with NeoPixel.  If not, see
 
 #ifdef ARDUINO_ARCH_ESP32
 
-extern "C"
-{
-#include <Arduino.h>
+#include <esp_log.h>
+
 #include "Esp32_i2s.h"
-}
 
 const uint16_t c_dmaBytesPerPixelBytes = 4;
 
