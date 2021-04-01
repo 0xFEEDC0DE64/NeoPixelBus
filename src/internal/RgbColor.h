@@ -26,6 +26,8 @@ License along with NeoPixel.  If not, see
 #pragma once
 
 #include <cstdint>
+#include <cstdlib>
+#include <algorithm>
 
 #include "NeoSettings.h"
 
@@ -156,7 +158,9 @@ private:
     inline static constexpr uint8_t _elementBrighten(uint8_t value, uint8_t ratio);
     inline static constexpr float _CalcColor(float p, float q, float t);
     inline static constexpr RgbColor convertToRgbColor(const HslColor& color);
-    inline static constexpr RgbColor convertToRgbColor(const HsbColor& color);
+    inline static constexpr RgbColor convertToRgbColor(HsbColor color);
+    inline static constexpr bool fuzzyCompare(double p1, double p2);
+    inline static constexpr bool fuzzyCompare(float p1, float p2);
 };
 
 #include "HslColor.h"
@@ -374,70 +378,68 @@ constexpr RgbColor RgbColor::convertToRgbColor(const HslColor& color)
     return RgbColor{(uint8_t)(r * 255.0f), (uint8_t)(g * 255.0f), (uint8_t)(b * 255.0f)};
 }
 
-constexpr RgbColor RgbColor::convertToRgbColor(const HsbColor& color)
+constexpr RgbColor RgbColor::convertToRgbColor(HsbColor color)
 {
-    float r{};
-    float g{};
-    float b{};
+    if (fuzzyCompare(color.S, 0.0f))
+        return RgbColor{uint8_t(color.B), uint8_t(color.B), uint8_t(color.B)}; // achromatic or black
 
-    float h = color.H;
-    float s = color.S;
-    float v = color.B;
+    RgbColor rgb{};
 
-    if (color.S == 0.0f)
+    if (color.H < 0.0f)
+        color.H += 1.0f;
+    else if (color.H >= 1.0f)
+        color.H -= 1.0f;
+
+    color.H *= 6.0f;
+    int i = (int)color.H;
+    float f = color.H - i;
+    float q = color.B * (1.0f - color.S * f);
+    float p = color.B * (1.0f - color.S);
+    float t = color.B * (1.0f - color.S * (1.0f - f));
+
+    switch (i)
     {
-        r = g = b = v; // achromatic or black
-    }
-    else
-    {
-        if (h < 0.0f)
-        {
-            h += 1.0f;
-        }
-        else if (h >= 1.0f)
-        {
-            h -= 1.0f;
-        }
-        h *= 6.0f;
-        int i = (int)h;
-        float f = h - i;
-        float q = v * (1.0f - s * f);
-        float p = v * (1.0f - s);
-        float t = v * (1.0f - s * (1.0f - f));
-        switch (i)
-        {
-        case 0:
-            r = v;
-            g = t;
-            b = p;
-            break;
-        case 1:
-            r = q;
-            g = v;
-            b = p;
-            break;
-        case 2:
-            r = p;
-            g = v;
-            b = t;
-            break;
-        case 3:
-            r = p;
-            g = q;
-            b = v;
-            break;
-        case 4:
-            r = t;
-            g = p;
-            b = v;
-            break;
-        default:
-            r = v;
-            g = p;
-            b = q;
-            break;
-        }
+    case 0:
+        rgb.R = color.B;
+        rgb.G = t;
+        rgb.B = p;
+        break;
+    case 1:
+        rgb.R = q;
+        rgb.G = color.B;
+        rgb.B = p;
+        break;
+    case 2:
+        rgb.R = p;
+        rgb.G = color.B;
+        rgb.B = t;
+        break;
+    case 3:
+        rgb.R = p;
+        rgb.G = q;
+        rgb.B = color.B;
+        break;
+    case 4:
+        rgb.R = t;
+        rgb.G = p;
+        rgb.B = color.B;
+        break;
+    default:
+        rgb.R = color.B;
+        rgb.G = p;
+        rgb.B = q;
+        break;
     }
 
-    return RgbColor{(uint8_t)(r * 255.0f), (uint8_t)(g * 255.0f), (uint8_t)(b * 255.0f)};
+    return rgb;
+}
+
+constexpr bool RgbColor::fuzzyCompare(double p1, double p2)
+{
+    return (std::abs(p1 - p2) * 1000000000000. <= std::min(std::abs(p1), std::abs(p2)));
+}
+
+constexpr bool RgbColor::fuzzyCompare(float p1, float p2)
+{
+    return (std::abs(p1 - p2) * 100000.f <= std::min(std::abs(p1), std::abs(p2)));
 }
